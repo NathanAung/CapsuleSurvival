@@ -6,6 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "ProjectileBullet.h"
 #include "PlayerPawnCapsule.generated.h"
 
 UCLASS()
@@ -39,4 +40,10 @@ public:
     // Input functions
     void MoveForward(float Value);
     void MoveRight(float Value);
+
+private:
+    UPROPERTY(EditAnywhere, Category = "Combat")
+    TSubclassOf<AProjectileBullet> ProjectileClass;
+
+    void Shoot();
 };
