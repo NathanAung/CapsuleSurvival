@@ -1,3 +1,4 @@
+// PlayerPawnCapsule.cpp
 #include "PlayerPawnCapsule.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -12,6 +13,16 @@ APlayerPawnCapsule::APlayerPawnCapsule()
     // Root capsule
     CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
     RootComponent = CapsuleComponent;
+
+    // --- Collision setup ---
+    CapsuleComponent->InitCapsuleSize(42.f, 96.f);
+    CapsuleComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);   // Only query overlaps (no physics blocking)
+    CapsuleComponent->SetCollisionObjectType(ECC_Pawn);
+    CapsuleComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+    CapsuleComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); // Still blocks world geometry
+    CapsuleComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+    CapsuleComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+    CapsuleComponent->SetGenerateOverlapEvents(true);
 
     // Movement component
     MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
@@ -38,6 +49,7 @@ APlayerPawnCapsule::APlayerPawnCapsule()
 void APlayerPawnCapsule::BeginPlay()
 {
     Super::BeginPlay();
+    CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &APlayerPawnCapsule::OnOverlapBegin);
 }
 
 

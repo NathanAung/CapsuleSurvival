@@ -1,3 +1,4 @@
+// PlayerPawnCapsule.h
 #pragma once
 
 #include "CoreMinimal.h"
@@ -53,6 +54,13 @@ private:
 	TSubclassOf<AProjectileBullet> ProjectileClass; // Bullet projectile class to spawn
 
     void Shoot();
+
+    UFUNCTION()
+    void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Player overlapped: %s"), *OtherActor->GetName());
+    }
 
     
 };

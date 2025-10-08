@@ -1,3 +1,5 @@
+// EnemyCube.cpp
+
 #include "EnemyCube.h"
 #include "PlayerPawnCapsule.h"
 #include "ProjectileBullet.h"
@@ -12,13 +14,15 @@ AEnemyCube::AEnemyCube()
     CubeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CubeMesh"));
     RootComponent = CubeMesh;
 
-    CubeMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-    CubeMesh->SetCollisionObjectType(ECC_Pawn);
+    CubeMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    CubeMesh->SetCollisionObjectType(ECC_WorldDynamic);
     CubeMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
-    CubeMesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); // bullets
-    CubeMesh->SetNotifyRigidBodyCollision(true);
+    CubeMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+    CubeMesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+    CubeMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap); // allows player overlap
+    CubeMesh->SetGenerateOverlapEvents(true);
 
-    CubeMesh->OnComponentHit.AddDynamic(this, &AEnemyCube::OnHit);
+    CubeMesh->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCube::OnOverlapBegin);
 }
 
 void AEnemyCube::BeginPlay()
@@ -38,9 +42,14 @@ void AEnemyCube::Tick(float DeltaTime)
     }
 }
 
-void AEnemyCube::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
-    UPrimitiveComponent* OtherComp, FVector NormalImpulse,
-    const FHitResult& Hit)
+// Called when overlapping another actor
+void AEnemyCube::OnOverlapBegin(
+    UPrimitiveComponent* OverlappedComp,
+    AActor* OtherActor,
+    UPrimitiveComponent* OtherComp,
+    int32 OtherBodyIndex,
+    bool bFromSweep,
+    const FHitResult& SweepResult)
 {
     if (!OtherActor || OtherActor == this) return;
 
@@ -52,7 +61,9 @@ void AEnemyCube::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
     }
     else if (APlayerPawnCapsule* PlayerPawn = Cast<APlayerPawnCapsule>(OtherActor))
     {
-        PlayerPawn->HP -= 1;
-        UE_LOG(LogTemp, Warning, TEXT("Player hit! HP: %d"), PlayerPawn->HP);
+        // Deal damage properly using Unreal’s damage system
+        UGameplayStatics::ApplyDamage(PlayerPawn, 1.0f, nullptr, this, nullptr);
+        UE_LOG(LogTemp, Warning, TEXT("Enemy overlapped player! Damage applied."));
+        Destroy(); // Enemy destroys itself on hit
     }
 }
