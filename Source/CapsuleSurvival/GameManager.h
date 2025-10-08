@@ -53,5 +53,12 @@ private:
     // Helper function to destroy all existing enemies
     void DestroyAllEnemies();
 
+    UFUNCTION()
+    void RestartGame();
+
+    UFUNCTION()
+    void QuitGame();
+
+
 	bool gameEnded = false;
 };

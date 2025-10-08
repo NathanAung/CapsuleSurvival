@@ -25,5 +25,6 @@ void UGameUIWidget::ShowStatusMessage(const FString& Message)
     {
         StatusText->SetText(FText::FromString(Message));
         StatusText->SetVisibility(ESlateVisibility::Visible);
+        RetryText->SetVisibility(ESlateVisibility::Visible);
     }
 }

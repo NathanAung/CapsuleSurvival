@@ -4,6 +4,10 @@
 #include "EnemySpawner.h"
 #include "EnemyCube.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Engine/GameViewportClient.h"
+#include "GameFramework/PlayerController.h"
+#include "Engine/World.h"
 #include "TimerManager.h"
 
 AGameManager::AGameManager()
@@ -14,6 +18,14 @@ AGameManager::AGameManager()
 void AGameManager::BeginPlay()
 {
     Super::BeginPlay();
+
+    // --- Force Windowed Mode ---
+    if (GEngine)
+    {
+        GEngine->Exec(GetWorld(), TEXT("r.SetRes 1280x720w"));
+    }
+
+
 	Score = 0;
 
     // Start the main game timer
@@ -46,6 +58,23 @@ void AGameManager::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
     // Update UI
     UpdateUI();
+
+    if (gameEnded)
+    {
+        APlayerController* PC = GetWorld()->GetFirstPlayerController();
+		if (!PC) return;
+
+        PC->bShowMouseCursor = true;
+
+        if (PC->WasInputKeyJustPressed(EKeys::SpaceBar))
+        {
+            RestartGame();
+        }
+        else if (PC->WasInputKeyJustPressed(EKeys::Escape))
+        {
+            QuitGame();
+        }
+    }
 }
 
 
@@ -134,4 +163,18 @@ void AGameManager::GameOver()
 
 	gameEnded = true;
 }
+
+void AGameManager::RestartGame()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Restarting game..."));
+    UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName())); // reload current level
+}
+
+void AGameManager::QuitGame()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Quitting game..."));
+    APlayerController* PC = GetWorld()->GetFirstPlayerController();
+    UKismetSystemLibrary::QuitGame(GetWorld(), PC, EQuitPreference::Quit, true);
+}
+
 

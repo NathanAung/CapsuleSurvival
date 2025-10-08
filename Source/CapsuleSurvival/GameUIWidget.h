@@ -22,6 +22,9 @@ public:
     UPROPERTY(meta = (BindWidget))
     class UTextBlock* StatusText;
 
+    UPROPERTY(meta = (BindWidget))
+    class UTextBlock* RetryText;
+
     void UpdateTime(int32 SecondsLeft);
     void UpdateScore(int32 NewScore);
     void ShowStatusMessage(const FString& Message);
