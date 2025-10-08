@@ -1,8 +1,10 @@
 // PlayerPawnCapsule.cpp
+
 #include "PlayerPawnCapsule.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "ProjectileBullet.h"
+#include "GameManager.h"
 
 
 APlayerPawnCapsule::APlayerPawnCapsule()
@@ -153,7 +155,19 @@ float APlayerPawnCapsule::TakeDamage(float DamageAmount, FDamageEvent const& Dam
     if (HP <= 0)
     {
         UE_LOG(LogTemp, Error, TEXT("Player is dead!"));
-        Destroy(); // You can replace this with a "Game Over" later
+
+        // Find the GameManager in the world
+        AGameManager* GameManager = Cast<AGameManager>(
+            UGameplayStatics::GetActorOfClass(GetWorld(), AGameManager::StaticClass())
+        );
+
+        if (GameManager)
+        {
+            GameManager->GameOver();  // Stop spawners and clear enemies
+        }
+
+        // Finally destroy the player
+        Destroy();
     }
 
     return DamageAmount;

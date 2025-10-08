@@ -64,3 +64,11 @@ void AEnemySpawner::SpawnEnemy()
         UE_LOG(LogTemp, Warning, TEXT("Enemy spawned at: %s"), *SpawnLocation.ToString());
     }
 }
+
+
+void AEnemySpawner::StopSpawning()
+{
+    GetWorldTimerManager().ClearTimer(SpawnTimerHandle);
+    UE_LOG(LogTemp, Warning, TEXT("%s: Spawning stopped."), *GetName());
+}
+

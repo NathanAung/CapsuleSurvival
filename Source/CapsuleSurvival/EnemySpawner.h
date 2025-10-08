@@ -17,6 +17,8 @@ class CAPSULESURVIVAL_API AEnemySpawner : public AActor
 public:
     AEnemySpawner();
 
+    void StopSpawning();
+
 protected:
     virtual void BeginPlay() override;
 
