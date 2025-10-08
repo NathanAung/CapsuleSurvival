@@ -3,6 +3,7 @@
 #include "EnemyCube.h"
 #include "PlayerPawnCapsule.h"
 #include "ProjectileBullet.h"
+#include "GameManager.h"
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DamageEvents.h"
@@ -56,6 +57,17 @@ void AEnemyCube::OnOverlapBegin(
     if (AProjectileBullet* Bullet = Cast<AProjectileBullet>(OtherActor))
     {
         UE_LOG(LogTemp, Warning, TEXT("Enemy destroyed by bullet!"));
+
+        // Award points through GameManager
+        AGameManager* GameManager = Cast<AGameManager>(
+            UGameplayStatics::GetActorOfClass(GetWorld(), AGameManager::StaticClass())
+        );
+
+        if (GameManager)
+        {
+            GameManager->AddScore(100);
+        }
+
         Bullet->Destroy();
         Destroy();
     }
