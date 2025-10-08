@@ -1,4 +1,4 @@
-# CapsuleSurvival
+# Capsule　Survival
 
 ## 操作方法 
 WASD - 移動　<br>
