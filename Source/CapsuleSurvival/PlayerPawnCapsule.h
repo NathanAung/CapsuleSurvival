@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "Camera/CameraComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/FloatingPawnMovement.h"
+#include "Camera/CameraComponent.h"
 #include "ProjectileBullet.h"
 #include "PlayerPawnCapsule.generated.h"
 
@@ -26,24 +26,33 @@ public:
 
     // Components
     UPROPERTY(VisibleAnywhere)
-    UCapsuleComponent* CapsuleComponent;
+	UCapsuleComponent* CapsuleComponent; // Root component for collision
 
     UPROPERTY(VisibleAnywhere)
-    UFloatingPawnMovement* MovementComponent;
+    UFloatingPawnMovement* MovementComponent; // simple movement for pawn class
 
     UPROPERTY(VisibleAnywhere)
-    USpringArmComponent* SpringArm;
+	USpringArmComponent* SpringArm; // Camera boom positioning the camera behind the character
 
     UPROPERTY(VisibleAnywhere)
-    UCameraComponent* Camera;
+	UCameraComponent* Camera; // Follow camera
 
     // Input functions
     void MoveForward(float Value);
     void MoveRight(float Value);
 
+    UPROPERTY(EditAnywhere, Category = "Stats")
+    int32 HP = 5;
+
+    virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+        class AController* EventInstigator, AActor* DamageCauser) override;
+
+
 private:
     UPROPERTY(EditAnywhere, Category = "Combat")
-    TSubclassOf<AProjectileBullet> ProjectileClass;
+	TSubclassOf<AProjectileBullet> ProjectileClass; // Bullet projectile class to spawn
 
     void Shoot();
+
+    
 };

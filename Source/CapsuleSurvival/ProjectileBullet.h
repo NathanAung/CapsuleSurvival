@@ -4,6 +4,9 @@
 #include "GameFramework/Actor.h"
 #include "ProjectileBullet.generated.h"
 
+class UStaticMeshComponent;
+class UProjectileMovementComponent;
+
 UCLASS()
 class CAPSULESURVIVAL_API AProjectileBullet : public AActor
 {
@@ -15,19 +18,13 @@ public:
 protected:
     virtual void BeginPlay() override;
 
-public:
-    virtual void Tick(float DeltaTime) override;
-
 private:
-    // The bullet’s collision shape
     UPROPERTY(VisibleAnywhere)
     UStaticMeshComponent* BulletMesh;
 
-    // Bullet movement component
     UPROPERTY(VisibleAnywhere)
-    class UProjectileMovementComponent* ProjectileMovement;
+    UProjectileMovementComponent* ProjectileMovement;
 
-    // Called when bullet hits something
     UFUNCTION()
     void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
         UPrimitiveComponent* OtherComp, FVector NormalImpulse,
