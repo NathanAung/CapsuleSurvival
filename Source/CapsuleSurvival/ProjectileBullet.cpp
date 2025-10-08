@@ -50,4 +50,6 @@ void AProjectileBullet::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
         Enemy->Destroy();
         Destroy();
     }
+
+    Destroy();
 }
