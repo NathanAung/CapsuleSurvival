@@ -1,4 +1,6 @@
 # CapsuleSurvival
+言語 - C++　<br>
+エンジン - Unreal Engine
 
 ## 操作方法 
 WASD - 移動　<br>
